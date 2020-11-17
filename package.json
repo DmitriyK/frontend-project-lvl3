@@ -3,9 +3,7 @@
   "version": "1.0.0",
   "description": "Проект №3 на Hexlet",
   "scripts": {
-    "eslint": "eslint .",
-    "build": "cross-env rm -rf dist && NODE_ENV=production npx webpack",
-    "start-server": "npx webpack serve"
+    "eslint": "eslint ."
   },
   "repository": {
     "type": "git",
@@ -26,7 +24,6 @@
     "@babel/preset-env": "^7.9.6",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.2.1",
-    "cross-env": "^7.0.2",
     "css-loader": "^5.0.1",
     "eslint": "^7.13.0",
     "eslint-config-airbnb-base": "^14.2.1",
