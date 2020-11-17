@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "Проект №3 на Hexlet",
   "scripts": {
-    "eslint": "eslint ."
+    "eslint": "eslint .",
+    "deploy": "npm run build && surge dist"
   },
   "repository": {
     "type": "git",
