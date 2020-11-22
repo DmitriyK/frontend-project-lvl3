@@ -1,5 +1,5 @@
 import * as yup from 'yup';
 
-export default () => {
-  console.log('valid');
+export default (url) => {
+  console.log(url);
 };
