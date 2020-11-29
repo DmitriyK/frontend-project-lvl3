@@ -1,7 +1,7 @@
-import Request from './request.js';
+import Feed from './app.js';
 
 export default () => {
-  const element = document.getElementById('rssForm');
-  const obj = new Request(element);
-  obj.init();
+  const form = document.getElementById('rssForm');
+  const feed = new Feed(form);
+  feed.init();
 };
