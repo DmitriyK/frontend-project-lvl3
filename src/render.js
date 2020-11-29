@@ -1,5 +1,3 @@
-const containerFeedback = document.querySelector('.feedback');
-
 const containerFeeds = document.querySelector('.feeds');
 
 const renderFeeds = (feeds) => {
@@ -40,15 +38,7 @@ const renderPosts = (posts) => {
   containerFeeds.append(listPosts);
 };
 
-export const renderErrors = ({ error }) => {
-  containerFeedback.classList.add('text-danger');
-  containerFeedback.innerHTML = error;
-};
-
 export default ({ feeds, posts }) => {
-  containerFeedback.classList.remove('text-danger');
-  containerFeedback.classList.add('text-success');
-  containerFeedback.innerHTML = 'Rss has been loaded';
   containerFeeds.innerHTML = '';
   renderFeeds(feeds);
   renderPosts(posts);
