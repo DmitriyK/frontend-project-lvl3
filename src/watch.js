@@ -1,14 +1,27 @@
 import onChange from 'on-change';
-// import render from './render';
+import renderState, { renderErrors as renderErrorMessage } from './render';
+
+const form = document.getElementById('rssForm');
+const button = form.querySelector('button');
+const input = form.querySelector('input');
 
 export default (state) => onChange(state, (path, value) => {
   switch (path) {
-    case 'rssForm.processState':
-      console.log(path);
-      console.log(value);
-      console.log(state);
-      break;
-    case 'rssForm.valid':
+    case 'processState':
+      if (value === 'sending') {
+        input.classList.remove('is-invalid');
+        button.disabled = true;
+      }
+      if (value === 'finished') {
+        button.disabled = false;
+        form.reset();
+        renderState(state);
+      }
+      if (value === 'failed') {
+        input.classList.add('is-invalid');
+        button.disabled = false;
+        renderErrorMessage(state);
+      }
       break;
     default:
       break;
