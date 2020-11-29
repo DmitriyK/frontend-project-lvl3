@@ -1,9 +1,10 @@
 import onChange from 'on-change';
-import renderState, { renderErrors as renderErrorMessage } from './render';
+import renderState from './render';
 
 const form = document.getElementById('rssForm');
 const button = form.querySelector('button');
 const input = form.querySelector('input');
+const containerFeedback = document.querySelector('.feedback');
 
 export default (state) => onChange(state, (path, value) => {
   switch (path) {
@@ -15,12 +16,16 @@ export default (state) => onChange(state, (path, value) => {
       if (value === 'finished') {
         button.disabled = false;
         form.reset();
+        containerFeedback.classList.remove('text-danger');
+        containerFeedback.classList.add('text-success');
+        containerFeedback.innerHTML = state.successMessage;
         renderState(state);
       }
       if (value === 'failed') {
-        input.classList.add('is-invalid');
         button.disabled = false;
-        renderErrorMessage(state);
+        input.classList.add('is-invalid');
+        containerFeedback.classList.add('text-danger');
+        containerFeedback.innerHTML = state.errorMessage;
       }
       break;
     default:
