@@ -2,9 +2,10 @@ export default {
   translation: {
     form: {
       feedback: {
+        sending: 'Request...',
         success: 'Rss has been loaded',
-        error: {
-          validate: 'Must be valid url',
+        fail: {
+          invalid: 'Must be valid url',
           exists: 'Rss already exists',
           request: 'This source doesn\'t contain valid rss',
         },
