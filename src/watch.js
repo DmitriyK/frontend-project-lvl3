@@ -1,34 +1,49 @@
 import onChange from 'on-change';
-import renderState from './render';
+import render from './render.js';
+import localize from './localize.js';
 
-const form = document.getElementById('rssForm');
+const form = document.querySelector('#rssForm');
 const button = form.querySelector('button');
 const input = form.querySelector('input');
 const containerFeedback = document.querySelector('.feedback');
 
-export default (state) => onChange(state, (path, value) => {
+const watch = (state) => onChange(state, (path, value) => {
   switch (path) {
     case 'processState':
-      if (value === 'sending') {
+      if (value === 'wait') {
+        button.disabled = false;
         input.classList.remove('is-invalid');
-        button.disabled = true;
+        containerFeedback.classList.remove('text-danger', 'text-success');
+        containerFeedback.innerHTML = '';
       }
-      if (value === 'finished') {
+      if (value === 'sending') {
+        button.disabled = true;
+        containerFeedback.innerHTML = localize('form.feedback.sending');
+      }
+      if (value === 'success') {
         button.disabled = false;
         form.reset();
-        containerFeedback.classList.remove('text-danger');
         containerFeedback.classList.add('text-success');
-        containerFeedback.innerHTML = state.successMessage;
-        renderState(state);
+        containerFeedback.innerHTML = localize('form.feedback.success');
+        render(state, 'add');
       }
       if (value === 'failed') {
-        button.disabled = false;
+        button.disabled = true;
         input.classList.add('is-invalid');
         containerFeedback.classList.add('text-danger');
-        containerFeedback.innerHTML = state.errorMessage;
       }
+      break;
+    case 'error':
+      if (value) {
+        containerFeedback.innerHTML = localize(`form.feedback.fail.${state.error}`);
+      }
+      break;
+    case 'posts':
+      render(state, 'update');
       break;
     default:
       break;
   }
 });
+
+export default watch;
