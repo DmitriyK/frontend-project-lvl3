@@ -25,7 +25,6 @@ const watch = (state) => onChange(state, (path, value) => {
         form.reset();
         containerFeedback.classList.add('text-success');
         containerFeedback.innerHTML = localize('form.feedback.success');
-        render(state, 'add');
       }
       if (value === 'failed') {
         button.disabled = true;
@@ -38,8 +37,18 @@ const watch = (state) => onChange(state, (path, value) => {
         containerFeedback.innerHTML = localize(`form.feedback.fail.${state.error}`);
       }
       break;
-    case 'posts':
-      render(state, 'update');
+    case 'currentData': {
+      const { feed, posts } = value;
+      if (Object.prototype.hasOwnProperty.call(value, 'feed')) {
+        render('feed', feed);
+        render('posts', posts);
+      } else {
+        render('posts', posts);
+      }
+    }
+      break;
+    case 'idCurrentPost':
+      render('modal', state);
       break;
     default:
       break;

@@ -1,20 +1,24 @@
+import $ from 'jquery';
 import addFeed, { updateRequestsFeeds } from './request.js';
 import validate from './validate.js';
-
-const form = document.querySelector('#rssForm');
-const input = form.querySelector('input');
+import watch from './watch.js';
 
 export default () => {
   const state = {
+    idCurrentPost: '',
     currentUrl: '',
-    processState: '',
+    currentData: {},
     urls: [],
     feeds: [],
     posts: [],
+    processState: '',
     error: '',
   };
 
   updateRequestsFeeds(state);
+
+  const form = document.querySelector('#rssForm');
+  const input = form.querySelector('input');
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -29,5 +33,11 @@ export default () => {
     const url = e.target.value;
     validate(state, url);
     state.error = '';
+  });
+
+  $('#myModal').on('show.bs.modal', (event) => {
+    const button = $(event.relatedTarget);
+    const id = button.data('id');
+    watch(state).idCurrentPost = id;
   });
 };
