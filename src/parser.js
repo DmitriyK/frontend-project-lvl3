@@ -1,19 +1,23 @@
-const patt = /<!\[CDATA\[(.*)\]\]>/gm;
-
 export default (data) => {
   const parser = new DOMParser();
   const doc = parser.parseFromString(data, 'application/xml');
+
+  const error = doc.querySelector('parsererror');
+  if (error !== null) {
+    throw new Error('Error parsing XML');
+  }
+
   const feed = {
-    title: doc.querySelector('title').innerHTML.replace(patt, '$1'),
-    description: doc.querySelector('description').innerHTML.replace(patt, '$1'),
-    link: doc.querySelector('link').innerHTML.replace(patt, '$1'),
+    title: doc.querySelector('title').textContent,
+    description: doc.querySelector('description').textContent,
+    link: doc.querySelector('link').textContent,
   };
 
   const items = doc.querySelectorAll('item');
   const posts = [...items].map((item) => {
-    const title = item.querySelector('title').innerHTML.replace(patt, '$1');
-    const link = item.querySelector('link').innerHTML.replace(patt, '$1');
-    const description = item.querySelector('description').innerHTML.replace(patt, '$1');
+    const title = item.querySelector('title').textContent;
+    const link = item.querySelector('link').textContent;
+    const description = item.querySelector('description').textContent;
     return { title, link, description };
   });
 

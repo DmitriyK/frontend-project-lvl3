@@ -5,9 +5,10 @@ export default {
         sending: 'Request...',
         success: 'Rss has been loaded',
         fail: {
-          invalid: 'Must be valid url',
+          url: 'Must be valid url',
           exists: 'Rss already exists',
-          request: 'This source doesn\'t contain valid rss',
+          rss: 'This source doesn\'t contain valid rss',
+          server: 'Network error, please try again',
         },
       },
     },

@@ -28,7 +28,7 @@ export default () => {
     addFeed(state);
   });
 
-  input.addEventListener('change', (e) => {
+  input.addEventListener('input', (e) => {
     e.preventDefault();
     const url = e.target.value;
     validate(state, url);

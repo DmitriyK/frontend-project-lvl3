@@ -14,17 +14,21 @@ const watch = (state) => onChange(state, (path, value) => {
         button.disabled = false;
         input.classList.remove('is-invalid');
         containerFeedback.classList.remove('text-danger', 'text-success');
-        containerFeedback.innerHTML = '';
+        containerFeedback.textContent = '';
       }
       if (value === 'sending') {
         button.disabled = true;
-        containerFeedback.innerHTML = localize('form.feedback.sending');
+        localize((t) => {
+          containerFeedback.textContent = t('form.feedback.sending');
+        });
       }
       if (value === 'success') {
         button.disabled = false;
         form.reset();
         containerFeedback.classList.add('text-success');
-        containerFeedback.innerHTML = localize('form.feedback.success');
+        localize((t) => {
+          containerFeedback.textContent = t('form.feedback.success');
+        });
       }
       if (value === 'failed') {
         button.disabled = true;
@@ -34,7 +38,9 @@ const watch = (state) => onChange(state, (path, value) => {
       break;
     case 'error':
       if (value) {
-        containerFeedback.innerHTML = localize(`form.feedback.fail.${state.error}`);
+        localize((t) => {
+          containerFeedback.textContent = t(`form.feedback.fail.${state.error}`);
+        });
       }
       break;
     case 'currentData': {

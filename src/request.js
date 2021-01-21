@@ -1,3 +1,4 @@
+import { uniqueId, differenceBy } from 'lodash';
 import axios from 'axios';
 import parse from './parser.js';
 import watch from './watch.js';
@@ -13,20 +14,17 @@ const modefiedData = (posts, idFeed, countPosts) => {
   return modefiedPosts;
 };
 
+const makeRequest = (url) => axios.get(`${corsUrl}${url}`);
+
 export const updateRequestsFeeds = (state) => {
   const updateInterval = 5000;
-  const promises = state.urls.map((url) => axios.get(`${corsUrl}${url}`));
+  const promises = state.urls.map((url) => makeRequest(url));
   const update = ({ data }) => {
-    const func = (post) => {
-      const hasPost = state.posts.find(({ link }) => link === post.link);
-      return hasPost ? null : post;
-    };
-
     const { feed, posts } = parse(data);
-    const hasFeed = state.feeds.find(({ link }) => link === feed.link);
-    const newPosts = posts.map(func).filter((item) => item !== null);
+    const currentFeed = state.feeds.find(({ link }) => link === feed.link);
+    const newPosts = differenceBy(posts, state.posts, 'title');
     if (newPosts.length !== 0) {
-      const modefiedPosts = modefiedData(newPosts, hasFeed.id, state.posts.length);
+      const modefiedPosts = modefiedData(newPosts, currentFeed.id, state.posts.length);
       state.posts.unshift(...modefiedPosts);
       watch(state).currentData = { posts: modefiedPosts };
     }
@@ -41,10 +39,10 @@ export const updateRequestsFeeds = (state) => {
 
 export default (state) => {
   watch(state).processState = 'sending';
-  axios.get(`${corsUrl}${state.currentUrl}`)
+  makeRequest(state.currentUrl)
     .then(({ data }) => {
       const { feed, posts } = parse(data);
-      const feedId = state.feeds.length + 1;
+      const feedId = uniqueId();
       const modefiedFeed = { ...feed, id: feedId };
       const modefiedPosts = modefiedData(posts, feedId, state.posts.length);
       state.urls.push(state.currentUrl);
@@ -52,12 +50,16 @@ export default (state) => {
       state.posts.unshift(...modefiedPosts);
       watch(state).processState = 'success';
       watch(state).currentData = { feed: modefiedFeed, posts: modefiedPosts };
-      console.log(state.feeds);
-      console.log(state.posts);
     })
-    .catch((err) => {
-      watch(state).error = 'request';
+    .catch((error) => {
       watch(state).processState = 'failed';
-      throw err;
+      if (error.message === 'Error parsing XML') {
+        watch(state).error = 'rss';
+      } else if (error.response.status === 500 || error.response.status === 429) {
+        watch(state).error = 'server';
+      } else {
+        watch(state).error = 'rss';
+      }
+      throw error;
     });
 };
