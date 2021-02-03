@@ -1,15 +1,14 @@
-import onChange from 'on-change';
+import i18next from 'i18next';
 import render from './render.js';
-import localize from './localize.js';
 
 const form = document.querySelector('#rssForm');
 const button = form.querySelector('button');
 const input = form.querySelector('input');
 const containerFeedback = document.querySelector('.feedback');
 
-const watch = (state) => onChange(state, (path, value) => {
+export default (path, value) => {
   switch (path) {
-    case 'processState':
+    case 'form.processState':
       if (value === 'wait') {
         button.disabled = false;
         input.classList.remove('is-invalid');
@@ -18,17 +17,13 @@ const watch = (state) => onChange(state, (path, value) => {
       }
       if (value === 'sending') {
         button.disabled = true;
-        localize((t) => {
-          containerFeedback.textContent = t('form.feedback.sending');
-        });
+        containerFeedback.textContent = i18next.t(`form.feedback.${value}`);
       }
       if (value === 'success') {
         button.disabled = false;
         form.reset();
         containerFeedback.classList.add('text-success');
-        localize((t) => {
-          containerFeedback.textContent = t('form.feedback.success');
-        });
+        containerFeedback.textContent = i18next.t(`form.feedback.${value}`);
       }
       if (value === 'failed') {
         button.disabled = true;
@@ -36,29 +31,21 @@ const watch = (state) => onChange(state, (path, value) => {
         containerFeedback.classList.add('text-danger');
       }
       break;
-    case 'error':
+    case 'form.error':
       if (value) {
-        localize((t) => {
-          containerFeedback.textContent = t(`form.feedback.fail.${state.error}`);
-        });
+        containerFeedback.textContent = i18next.t(`form.feedback.failed.${value}`);
       }
       break;
-    case 'currentData': {
-      const { feed, posts } = value;
-      if (Object.prototype.hasOwnProperty.call(value, 'feed')) {
-        render('feed', feed);
-        render('posts', posts);
-      } else {
-        render('posts', posts);
-      }
-    }
+    case 'feeds':
+      render('feeds', value);
       break;
-    case 'idCurrentPost':
-      render('modal', state);
+    case 'posts':
+      render('posts', value);
+      break;
+    case 'modal':
+      render('modal', value);
       break;
     default:
       break;
   }
-});
-
-export default watch;
+};

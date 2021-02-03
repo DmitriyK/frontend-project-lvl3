@@ -1,64 +1,69 @@
-import { uniqueId, differenceBy } from 'lodash';
+import { uniqueId, differenceBy, has } from 'lodash';
 import axios from 'axios';
 import parse from './parser.js';
-import watch from './watch.js';
 
-const corsUrl = 'https://cors-anywhere.herokuapp.com/';
+const corsUrl = 'https://hexlet-allorigins.herokuapp.com/raw?url=';
 
-const modefiedData = (posts, idFeed, countPosts) => {
-  const modefiedPosts = posts.map((post, index) => {
-    const id = countPosts + index + 1;
-    const modefiedPost = { ...post, idFeed, id };
-    return modefiedPost;
+const addProxy = (url) => (url);
+
+const makeRequest = (url) => axios.get(`${addProxy(corsUrl)}${url}`);
+
+const getModefiedData = ({ feed, posts }) => {
+  const idFeed = (!has(feed, 'id')) ? uniqueId('feed_') : feed.id;
+  const modefiedFeed = { ...feed, id: idFeed };
+  const modefiedPosts = posts.map((post) => {
+    const id = (!has(post, 'id')) ? uniqueId('post_') : post.id;
+    const watched = (!has(post, 'watched')) ? false : post.watched;
+    return {
+      ...post, idFeed, id, watched,
+    };
   });
-  return modefiedPosts;
+  return { feed: modefiedFeed, posts: modefiedPosts };
 };
 
-const makeRequest = (url) => axios.get(`${corsUrl}${url}`);
-
-export const updateRequestsFeeds = (state) => {
+export const updateFeeds = (state) => {
   const updateInterval = 5000;
-  const promises = state.urls.map((url) => makeRequest(url));
-  const update = ({ data }) => {
+  const promises = state.urls.map((url) => makeRequest(url)
+    .then(({ data }) => ({ result: 'success', data }))
+    .catch((error) => ({ result: 'error', error })));
+  const update = (data) => {
     const { feed, posts } = parse(data);
     const currentFeed = state.feeds.find(({ link }) => link === feed.link);
-    const newPosts = differenceBy(posts, state.posts, 'title');
+    const newPosts = differenceBy(posts, state.posts, 'link');
     if (newPosts.length !== 0) {
-      const modefiedPosts = modefiedData(newPosts, currentFeed.id, state.posts.length);
-      state.posts.unshift(...modefiedPosts);
-      watch(state).currentData = { posts: modefiedPosts };
+      const modefiedData = getModefiedData({ feed: currentFeed, posts: newPosts });
+      state.posts.unshift(...modefiedData.posts);
     }
   };
 
   Promise.all(promises)
-    .then((feeds) => {
-      feeds.forEach(update);
+    .then((responses) => {
+      responses.forEach((response) => {
+        if (response.result === 'error') throw new Error(response.error);
+        else update(response.data);
+      });
     })
-    .finally(() => setTimeout(() => updateRequestsFeeds(state), updateInterval));
+    .catch((error) => { throw error; })
+    .finally(() => setTimeout(() => updateFeeds(state), updateInterval));
 };
 
 export default (state) => {
-  watch(state).processState = 'sending';
-  makeRequest(state.currentUrl)
+  state.form.processState = 'sending';
+  makeRequest(state.form.url)
     .then(({ data }) => {
-      const { feed, posts } = parse(data);
-      const feedId = uniqueId();
-      const modefiedFeed = { ...feed, id: feedId };
-      const modefiedPosts = modefiedData(posts, feedId, state.posts.length);
-      state.urls.push(state.currentUrl);
-      state.feeds.unshift(modefiedFeed);
-      state.posts.unshift(...modefiedPosts);
-      watch(state).processState = 'success';
-      watch(state).currentData = { feed: modefiedFeed, posts: modefiedPosts };
+      state.form.processState = 'success';
+      const parsedData = parse(data);
+      const { feed, posts } = getModefiedData(parsedData);
+      state.feeds.unshift(feed);
+      state.posts.unshift(...posts);
+      state.urls.unshift(state.form.url);
     })
     .catch((error) => {
-      watch(state).processState = 'failed';
+      state.form.processState = 'failed';
       if (error.message === 'Error parsing XML') {
-        watch(state).error = 'rss';
-      } else if (error.response.status === 500 || error.response.status === 429) {
-        watch(state).error = 'server';
+        state.form.error = 'rss';
       } else {
-        watch(state).error = 'rss';
+        state.form.error = 'server';
       }
       throw error;
     });

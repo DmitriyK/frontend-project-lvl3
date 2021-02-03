@@ -1,21 +1,28 @@
 import $ from 'jquery';
-import addFeed, { updateRequestsFeeds } from './request.js';
+import onChange from 'on-change';
+import addFeed, { updateFeeds } from './request.js';
 import validate from './validate.js';
 import watch from './watch.js';
+import localize from './locales';
 
 export default () => {
   const state = {
-    idCurrentPost: '',
-    currentUrl: '',
-    currentData: {},
+    form: {
+      url: '',
+      processState: '',
+      error: '',
+    },
+    modal: {
+      activePost: {},
+    },
     urls: [],
     feeds: [],
     posts: [],
-    processState: '',
-    error: '',
   };
 
-  updateRequestsFeeds(state);
+  const watchedState = onChange(state, watch);
+  localize();
+  updateFeeds(watchedState);
 
   const form = document.querySelector('#rssForm');
   const input = form.querySelector('input');
@@ -24,20 +31,25 @@ export default () => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const url = formData.get('url');
-    state.currentUrl = url;
-    addFeed(state);
+    state.form.url = url;
+    addFeed(watchedState);
   });
 
   input.addEventListener('input', (e) => {
     e.preventDefault();
     const url = e.target.value;
-    validate(state, url);
-    state.error = '';
+    state.form.url = url;
+    validate(watchedState);
   });
 
-  $('#myModal').on('show.bs.modal', (event) => {
+  $('#modalPost').on('show.bs.modal', (event) => {
     const button = $(event.relatedTarget);
-    const id = button.data('id');
-    watch(state).idCurrentPost = id;
+    const idActivePost = button.data('id');
+    const findPost = state.posts.find((post) => post.id === idActivePost);
+    const activePost = Object.assign(findPost, { watched: true });
+    const updatedPosts = state.posts
+      .map((post) => ((post.id === activePost.id) ? activePost : post));
+    state.posts = updatedPosts;
+    watchedState.modal = activePost;
   });
 };

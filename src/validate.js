@@ -1,27 +1,28 @@
 import * as yup from 'yup';
 import { setLocale } from 'yup';
-import watch from './watch';
 
 setLocale({
   string: {
-    url: 'url',
+    url: 'invalid',
   },
   mixed: {
     notOneOf: 'exists',
   },
 });
 
-export default (state, url) => {
+export default (state) => {
+  const { url } = state.form;
   const schema = yup.object().shape({
     url: yup.string().url().notOneOf(state.urls),
   });
 
   schema.validate({ url })
     .then(() => {
-      watch(state).processState = 'wait';
+      state.form.error = '';
+      state.form.processState = 'wait';
     })
     .catch((err) => {
-      watch(state).error = err.message;
-      watch(state).processState = 'failed';
+      state.form.error = err.message;
+      state.form.processState = 'failed';
     });
 };
