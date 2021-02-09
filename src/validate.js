@@ -1,16 +1,17 @@
+/* eslint-disable no-param-reassign */
 import * as yup from 'yup';
 import { setLocale } from 'yup';
 
-setLocale({
-  string: {
-    url: 'invalid',
-  },
-  mixed: {
-    notOneOf: 'exists',
-  },
-});
-
 export default (state) => {
+  setLocale({
+    string: {
+      url: 'invalid',
+    },
+    mixed: {
+      notOneOf: 'exists',
+    },
+  });
+
   const { url } = state.form;
   const schema = yup.object().shape({
     url: yup.string().url().notOneOf(state.urls),
@@ -18,11 +19,13 @@ export default (state) => {
 
   schema.validate({ url })
     .then(() => {
-      state.form.error = '';
       state.form.processState = 'wait';
+      state.form.error = '';
+      state.form.valid = true;
     })
     .catch((err) => {
+      state.form.processState = 'invalid';
       state.form.error = err.message;
-      state.form.processState = 'failed';
+      state.form.valid = false;
     });
 };

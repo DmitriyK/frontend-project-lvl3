@@ -4,11 +4,17 @@ export default {
       feedback: {
         success: 'Rss has been loaded',
         sending: 'Sending request...',
-        failed: {
-          invalid: 'Must be valid url',
-          exists: 'Rss already exists',
-          rss: 'This source doesn\'t contain valid rss',
-          server: 'Network error, please try again',
+        network: 'Network error, please try again',
+        rss: 'This source doesn\'t contain valid rss',
+        invalid: 'Must be valid url',
+        exists: 'Rss already exists',
+      },
+    },
+    grid: {
+      columns: {
+        title: {
+          feeds: 'Feeds',
+          posts: 'Posts',
         },
       },
     },

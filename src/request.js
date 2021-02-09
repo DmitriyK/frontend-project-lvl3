@@ -1,49 +1,33 @@
+/* eslint-disable no-param-reassign */
 import { uniqueId, differenceBy, has } from 'lodash';
 import axios from 'axios';
 import parse from './parser.js';
 
 const corsUrl = 'https://hexlet-allorigins.herokuapp.com/raw?url=';
 
-const addProxy = (url) => (url);
+const addProxy = (proxy, url) => `${proxy}${url}`;
 
-const makeRequest = (url) => axios.get(`${addProxy(corsUrl)}${url}`);
-
-const getModefiedData = ({ feed, posts }) => {
-  const idFeed = (!has(feed, 'id')) ? uniqueId('feed_') : feed.id;
-  const modefiedFeed = { ...feed, id: idFeed };
-  const modefiedPosts = posts.map((post) => {
-    const id = (!has(post, 'id')) ? uniqueId('post_') : post.id;
-    const watched = (!has(post, 'watched')) ? false : post.watched;
-    return {
-      ...post, idFeed, id, watched,
-    };
-  });
-  return { feed: modefiedFeed, posts: modefiedPosts };
-};
+const makeRequest = (url) => axios.get(addProxy(corsUrl, url));
 
 export const updateFeeds = (state) => {
   const updateInterval = 5000;
-  const promises = state.urls.map((url) => makeRequest(url)
-    .then(({ data }) => ({ result: 'success', data }))
-    .catch((error) => ({ result: 'error', error })));
+  const promises = state.urls.map((url) => makeRequest(url).catch((error) => ({ error })));
   const update = (data) => {
     const { feed, posts } = parse(data);
-    const currentFeed = state.feeds.find(({ link }) => link === feed.link);
     const newPosts = differenceBy(posts, state.posts, 'link');
     if (newPosts.length !== 0) {
-      const modefiedData = getModefiedData({ feed: currentFeed, posts: newPosts });
-      state.posts.unshift(...modefiedData.posts);
+      const modefiedPosts = newPosts.map((newPost) => ({ ...newPost, id: uniqueId('post_'), idFeed: feed.id }));
+      state.posts.unshift(...modefiedPosts);
     }
   };
 
   Promise.all(promises)
     .then((responses) => {
       responses.forEach((response) => {
-        if (response.result === 'error') throw new Error(response.error);
-        else update(response.data);
+        if (has(response, 'error')) throw response.error;
+        update(response.data);
       });
     })
-    .catch((error) => { throw error; })
     .finally(() => setTimeout(() => updateFeeds(state), updateInterval));
 };
 
@@ -52,10 +36,11 @@ export default (state) => {
   makeRequest(state.form.url)
     .then(({ data }) => {
       state.form.processState = 'success';
-      const parsedData = parse(data);
-      const { feed, posts } = getModefiedData(parsedData);
-      state.feeds.unshift(feed);
-      state.posts.unshift(...posts);
+      const { feed, posts } = parse(data);
+      const modefiedFeed = { ...feed, id: uniqueId('feed_') };
+      const modefiedPosts = posts.map((post) => ({ ...post, id: uniqueId('post_'), idFeed: modefiedFeed.id }));
+      state.feeds.unshift(modefiedFeed);
+      state.posts.unshift(...modefiedPosts);
       state.urls.unshift(state.form.url);
     })
     .catch((error) => {
@@ -63,7 +48,7 @@ export default (state) => {
       if (error.message === 'Error parsing XML') {
         state.form.error = 'rss';
       } else {
-        state.form.error = 'server';
+        state.form.error = 'network';
       }
       throw error;
     });
