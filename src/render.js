@@ -5,7 +5,7 @@ const renderPosts = ({ posts, watchedPosts }) => {
   containerPosts.innerHTML = '';
   const titleList = document.createElement('h4');
   titleList.classList.add('mb-3');
-  titleList.textContent = i18next.t('grid.columns.title.posts');
+  titleList.textContent = i18next.t('title.posts');
   const list = document.createElement('ul');
   list.classList.add('list-group', 'mb-5');
   containerPosts.prepend(titleList);
@@ -41,7 +41,7 @@ const renderFeeds = ({ feeds }) => {
   containerFeeds.innerHTML = '';
   const titleList = document.createElement('h4');
   titleList.classList.add('mb-3');
-  titleList.textContent = i18next.t('grid.columns.title.feeds');
+  titleList.textContent = i18next.t('title.feeds');
   const list = document.createElement('ul');
   list.classList.add('list-group', 'mb-5');
   containerFeeds.prepend(titleList);
