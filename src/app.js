@@ -8,8 +8,8 @@ import localize from './localize';
 export default () => {
   const state = {
     form: {
-      url: null,
-      valid: null,
+      url: '',
+      valid: false,
       processState: null,
       error: null,
     },
@@ -36,15 +36,24 @@ export default () => {
   input.addEventListener('input', (e) => {
     e.preventDefault();
     const url = e.target.value;
-    state.form.url = url;
-    validate(watchedState);
+    const error = validate(url, state.urls);
+    if (error) {
+      watchedState.form.processState = 'failed';
+      watchedState.form.error = error;
+      watchedState.form.valid = false;
+    } else {
+      watchedState.form.processState = 'wait';
+      watchedState.form.error = '';
+      watchedState.form.valid = true;
+      watchedState.form.url = url;
+    }
   });
 
   $('#modalPost').on('show.bs.modal', (event) => {
     const button = $(event.relatedTarget);
     const idActivePost = button.data('id');
     const activePost = state.posts.find((post) => post.id === idActivePost);
-    state.watchedPosts.unshift(idActivePost);
+    watchedState.watchedPosts.unshift(idActivePost);
     watchedState.modal = activePost;
   });
 };
