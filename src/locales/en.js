@@ -10,13 +10,9 @@ export default {
         exists: 'Rss already exists',
       },
     },
-    grid: {
-      columns: {
-        title: {
-          feeds: 'Feeds',
-          posts: 'Posts',
-        },
-      },
+    title: {
+      feeds: 'Feeds',
+      posts: 'Posts',
     },
   },
 };
