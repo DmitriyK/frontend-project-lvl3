@@ -3,9 +3,9 @@ import { uniqueId, differenceBy, has } from 'lodash';
 import axios from 'axios';
 import parse from './parser.js';
 
-const corsUrl = 'https://hexlet-allorigins.herokuapp.com/raw?url=';
+const corsUrl = 'https://hexlet-allorigins.herokuapp.com/get?disableCache=true&url=';
 
-const addProxy = (proxy, url) => `${proxy}${url}`;
+const addProxy = (proxy, url) => new URL(`${proxy}${url}`);
 
 const makeRequest = (url) => axios.get(addProxy(corsUrl, url));
 
@@ -13,7 +13,7 @@ export const updateFeeds = (state) => {
   const updateInterval = 5000;
   const promises = state.urls.map((url) => makeRequest(url).catch((error) => ({ error })));
   const update = (data) => {
-    const { feed, posts } = parse(data);
+    const { feed, posts } = parse(data.contents);
     const newPosts = differenceBy(posts, state.posts, 'link');
     if (newPosts.length !== 0) {
       const modefiedPosts = newPosts.map((newPost) => ({ ...newPost, id: uniqueId('post_'), idFeed: feed.id }));
@@ -24,8 +24,7 @@ export const updateFeeds = (state) => {
   Promise.all(promises)
     .then((responses) => {
       responses.forEach((response) => {
-        if (has(response, 'error')) throw response.error;
-        update(response.data);
+        if (!has(response, 'error')) update(response.data);
       });
     })
     .finally(() => setTimeout(() => updateFeeds(state), updateInterval));
@@ -36,7 +35,7 @@ export default (state) => {
   makeRequest(state.form.url)
     .then(({ data }) => {
       state.form.processState = 'success';
-      const { feed, posts } = parse(data);
+      const { feed, posts } = parse(data.contents);
       const modefiedFeed = { ...feed, id: uniqueId('feed_') };
       const modefiedPosts = posts.map((post) => ({ ...post, id: uniqueId('post_'), idFeed: modefiedFeed.id }));
       state.feeds.unshift(modefiedFeed);
