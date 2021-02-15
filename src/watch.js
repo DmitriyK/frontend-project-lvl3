@@ -8,35 +8,43 @@ export default (state) => {
   const input = form.querySelector('input');
   const containerFeedback = document.querySelector('.feedback');
 
-  return onChange(state, (path, value) => {
+  const showProcessState = (process) => {
+    switch (process) {
+      case 'wait':
+        input.classList.remove('is-invalid');
+        containerFeedback.classList.remove('text-danger', 'text-success');
+        containerFeedback.textContent = '';
+        break;
+      case 'sending':
+        button.disabled = true;
+        input.disabled = true;
+        containerFeedback.textContent = i18next.t(`form.feedback.${process}`);
+        break;
+      case 'success':
+        form.reset();
+        button.disabled = false;
+        input.disabled = false;
+        containerFeedback.classList.add('text-success');
+        containerFeedback.textContent = i18next.t(`form.feedback.${process}`);
+        break;
+      case 'failed':
+        button.disabled = false;
+        input.disabled = false;
+        input.classList.add('is-invalid');
+        containerFeedback.classList.add('text-danger');
+        break;
+      default:
+        break;
+    }
+  };
+
+  const watcher = (path, value) => {
     switch (path) {
       case 'form.processState':
-        if (value === 'wait') {
-          button.disabled = false;
-          input.classList.remove('is-invalid');
-          containerFeedback.classList.remove('text-danger', 'text-success');
-          containerFeedback.textContent = '';
-        }
-        if (value === 'sending') {
-          button.disabled = true;
-          containerFeedback.textContent = i18next.t(`form.feedback.${value}`);
-        }
-        if (value === 'success') {
-          button.disabled = false;
-          form.reset();
-          containerFeedback.classList.add('text-success');
-          containerFeedback.textContent = i18next.t(`form.feedback.${value}`);
-        }
-        if (value === 'failed') {
-          button.disabled = false;
-          input.classList.add('is-invalid');
-          containerFeedback.classList.add('text-danger');
-        }
-        if (value === 'invalid') {
-          button.disabled = true;
-          input.classList.add('is-invalid');
-          containerFeedback.classList.add('text-danger');
-        }
+        showProcessState(value);
+        break;
+      case 'form.valid':
+        button.disabled = !value;
         break;
       case 'form.error':
         if (value) {
@@ -55,5 +63,7 @@ export default (state) => {
       default:
         break;
     }
-  });
+  };
+
+  return onChange(state, watcher);
 };
