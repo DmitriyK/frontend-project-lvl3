@@ -1,5 +1,4 @@
 import $ from 'jquery';
-import i18next from 'i18next';
 import addFeed, { updateFeeds } from './request.js';
 import validate from './validate.js';
 import watch from './watch.js';
@@ -10,17 +9,16 @@ export default () => {
     form: {
       url: '',
       valid: false,
-      processState: null,
+      processState: 'wait',
       error: null,
     },
     modal: {},
-    urls: [],
     feeds: [],
     posts: [],
     watchedPosts: [],
   };
 
-  localize(i18next);
+  localize();
   const watchedState = watch(state);
   updateFeeds(watchedState);
 
@@ -36,7 +34,8 @@ export default () => {
   input.addEventListener('input', (e) => {
     e.preventDefault();
     const url = e.target.value;
-    const error = validate(url, state.urls);
+    const urls = state.feeds.map((feed) => feed.url);
+    const error = validate(url, urls);
     if (error) {
       watchedState.form.processState = 'failed';
       watchedState.form.error = error;
@@ -53,7 +52,10 @@ export default () => {
     const button = $(event.relatedTarget);
     const idActivePost = button.data('id');
     const activePost = state.posts.find((post) => post.id === idActivePost);
-    watchedState.watchedPosts.unshift(idActivePost);
+    const hasActivePost = state.watchedPosts.includes(idActivePost);
+    if (!hasActivePost) {
+      watchedState.watchedPosts.unshift(idActivePost);
+    }
     watchedState.modal = activePost;
   });
 };
