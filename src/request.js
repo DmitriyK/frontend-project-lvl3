@@ -1,5 +1,7 @@
 /* eslint-disable no-param-reassign */
-import { uniqueId, differenceBy, has } from 'lodash';
+import uniqueId from 'lodash/uniqueId';
+import differenceBy from 'lodash/differenceBy';
+import has from 'lodash/has';
 import axios from 'axios';
 import parse from './parser.js';
 
