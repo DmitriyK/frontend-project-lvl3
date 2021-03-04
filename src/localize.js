@@ -1,9 +1,8 @@
 import i18next from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import { setLocale } from 'yup';
-import resources from './locales';
 
-export default () => {
+export default (option) => {
   setLocale({
     string: {
       url: 'invalid',
@@ -13,10 +12,9 @@ export default () => {
     },
   });
 
-  return i18next
+  const instance = i18next.createInstance();
+
+  return instance
     .use(LanguageDetector)
-    .init({
-      fallbackLng: 'en',
-      resources,
-    });
+    .init(option);
 };

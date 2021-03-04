@@ -1,8 +1,7 @@
-import i18next from 'i18next';
 import onChange from 'on-change';
 import render from './render.js';
 
-export default (state) => {
+export default (state, i18nextInstance) => {
   const form = document.querySelector('#rssForm');
   const button = form.querySelector('button');
   const input = form.querySelector('input');
@@ -18,14 +17,18 @@ export default (state) => {
       case 'sending':
         button.disabled = true;
         input.disabled = true;
-        containerFeedback.textContent = i18next.t(`form.feedback.${process}`);
+        i18nextInstance.then((t) => {
+          containerFeedback.textContent = t(`form.feedback.${process}`);
+        });
         break;
       case 'success':
         form.reset();
         button.disabled = false;
         input.disabled = false;
         containerFeedback.classList.add('text-success');
-        containerFeedback.textContent = i18next.t(`form.feedback.${process}`);
+        i18nextInstance.then((t) => {
+          containerFeedback.textContent = t(`form.feedback.${process}`);
+        });
         break;
       case 'failed':
         button.disabled = false;
@@ -34,7 +37,7 @@ export default (state) => {
         containerFeedback.classList.add('text-danger');
         break;
       default:
-        break;
+        throw new Error(`Unknown order state: '${process}'!`);
     }
   };
 
@@ -48,20 +51,22 @@ export default (state) => {
         break;
       case 'form.error':
         if (value) {
-          containerFeedback.textContent = i18next.t(`form.feedback.${value}`);
+          i18nextInstance.then((t) => {
+            containerFeedback.textContent = t(`form.feedback.${value}`);
+          });
         }
         break;
       case 'feeds':
-        render('feeds', state);
+        render('feeds', state, i18nextInstance);
         break;
       case 'posts':
-        render('posts', state);
+        render('posts', state, i18nextInstance);
         break;
       case 'modal':
         render('modal', state);
         break;
       default:
-        break;
+        throw new Error(`Unknown order state: '${path}'!`);
     }
   };
 

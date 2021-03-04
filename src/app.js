@@ -2,9 +2,16 @@ import $ from 'jquery';
 import addFeed, { updateFeeds } from './request.js';
 import validate from './validate.js';
 import watch from './watch.js';
-import localize from './localize';
+import i18next from './localize';
+import resources from './locales';
 
 export default () => {
+  const i18nextInstance = i18next({
+    lng: 'en',
+    fallbackLng: 'en',
+    resources,
+  });
+
   const state = {
     form: {
       url: '',
@@ -17,9 +24,7 @@ export default () => {
     posts: [],
     watchedPosts: [],
   };
-
-  localize();
-  const watchedState = watch(state);
+  const watchedState = watch(state, i18nextInstance);
   updateFeeds(watchedState);
 
   const form = document.querySelector('#rssForm');
@@ -27,7 +32,7 @@ export default () => {
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();
-    state.processState = 'wait';
+    state.form.processState = 'wait';
     addFeed(watchedState);
   });
 
@@ -44,7 +49,7 @@ export default () => {
       watchedState.form.processState = 'wait';
       watchedState.form.error = '';
       watchedState.form.valid = true;
-      watchedState.form.url = url;
+      state.form.url = url;
     }
   });
 
@@ -54,7 +59,7 @@ export default () => {
     const activePost = state.posts.find((post) => post.id === idActivePost);
     const hasActivePost = state.watchedPosts.includes(idActivePost);
     if (!hasActivePost) {
-      watchedState.watchedPosts.unshift(idActivePost);
+      state.watchedPosts.unshift(idActivePost);
     }
     watchedState.modal = activePost;
   });
