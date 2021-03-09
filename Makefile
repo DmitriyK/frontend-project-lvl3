@@ -1,11 +1,14 @@
+start:
+				npm run start
+				
 develop:
-				npx webpack serve
+				npm run dev
+
+build:
+				npm run build
 
 install:
 				npm install
-
-build:
-				npm run-script build
 
 lint:
 				npx eslint .
