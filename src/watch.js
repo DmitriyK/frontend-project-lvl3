@@ -1,7 +1,7 @@
 import onChange from 'on-change';
 import render from './render.js';
 
-export default (state, i18nextInstance) => {
+export default (state, localize) => {
   const form = document.querySelector('#rssForm');
   const button = form.querySelector('button');
   const input = form.querySelector('input');
@@ -17,18 +17,14 @@ export default (state, i18nextInstance) => {
       case 'sending':
         button.disabled = true;
         input.disabled = true;
-        i18nextInstance.then((t) => {
-          containerFeedback.textContent = t(`form.feedback.${process}`);
-        });
+        containerFeedback.textContent = localize.t(`form.feedback.${process}`);
         break;
       case 'success':
         form.reset();
         button.disabled = false;
         input.disabled = false;
         containerFeedback.classList.add('text-success');
-        i18nextInstance.then((t) => {
-          containerFeedback.textContent = t(`form.feedback.${process}`);
-        });
+        containerFeedback.textContent = localize.t(`form.feedback.${process}`);
         break;
       case 'failed':
         button.disabled = false;
@@ -51,16 +47,14 @@ export default (state, i18nextInstance) => {
         break;
       case 'form.error':
         if (value) {
-          i18nextInstance.then((t) => {
-            containerFeedback.textContent = t(`form.feedback.${value}`);
-          });
+          containerFeedback.textContent = localize.t(`form.feedback.${value}`);
         }
         break;
       case 'feeds':
-        render('feeds', state, i18nextInstance);
+        render('feeds', state, localize);
         break;
       case 'posts':
-        render('posts', state, i18nextInstance);
+        render('posts', state, localize);
         break;
       case 'modal':
         render('modal', state);

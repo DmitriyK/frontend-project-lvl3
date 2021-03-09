@@ -1,11 +1,9 @@
-const renderPosts = ({ posts, watchedPosts }, i18nextInstance) => {
+const renderPosts = ({ posts, watchedPosts }, localize) => {
   const containerPosts = document.querySelector('#rss-posts');
   containerPosts.innerHTML = '';
   const titleList = document.createElement('h4');
   titleList.classList.add('mb-3');
-  i18nextInstance.then((t) => {
-    titleList.textContent = t('title.posts');
-  });
+  titleList.textContent = localize.t('title.posts');
   const list = document.createElement('ul');
   list.classList.add('list-group', 'mb-5');
   containerPosts.prepend(titleList);
@@ -36,14 +34,12 @@ const renderPosts = ({ posts, watchedPosts }, i18nextInstance) => {
   containerPosts.append(list);
 };
 
-const renderFeeds = ({ feeds }, i18nextInstance) => {
+const renderFeeds = ({ feeds }, localize) => {
   const containerFeeds = document.querySelector('#rss-feeds');
   containerFeeds.innerHTML = '';
   const titleList = document.createElement('h4');
   titleList.classList.add('mb-3');
-  i18nextInstance.then((t) => {
-    titleList.textContent = t('title.feeds');
-  });
+  titleList.textContent = localize.t('title.feeds');
   const list = document.createElement('ul');
   list.classList.add('list-group', 'mb-5');
   containerFeeds.prepend(titleList);
@@ -83,4 +79,4 @@ const typeRender = {
   modal: renderModal,
 };
 
-export default (type, data, i18nextInstance) => typeRender[type](data, i18nextInstance);
+export default (type, data, localize) => typeRender[type](data, localize);
