@@ -1,25 +1,75 @@
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const path = require('path');
+const HTMLWebpackPlugin = require('html-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const TerserWebpackPlugin = require('terser-webpack-plugin');
+
+const isDev = process.env.NODE_ENV === 'development';
+const isProd = !isDev;
+
+const jsLoaders = () => {
+  const loaders = [{
+    loader: 'babel-loader',
+    options: {
+      presets: ['@babel/preset-env'],
+    },
+  }];
+
+  if (isDev) {
+    loaders.push('eslint-loader');
+  }
+
+  return loaders;
+};
 
 module.exports = {
-  mode: process.env.NODE_ENV || 'development',
+  context: path.resolve(__dirname, 'src'),
+  mode: 'development',
+  entry: {
+    main: './index.js',
+  },
+  output: {
+    filename: '[name].bundle.js',
+    path: path.resolve(__dirname, 'dist'),
+  },
+  performance: {
+    hints: false,
+  },
+  optimization: {
+    minimize: true,
+    minimizer: [
+      new CssMinimizerPlugin(),
+      new TerserWebpackPlugin(),
+    ],
+  },
+  devServer: {
+    contentBase: path.join(__dirname, 'dist'),
+    port: 8080,
+  },
   module: {
     rules: [
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-        },
+        use: jsLoaders(),
       },
       {
         test: /\.css$/i,
-        use: ['style-loader', 'css-loader'],
+        use: [MiniCssExtractPlugin.loader, 'css-loader'],
       },
     ],
   },
   plugins: [
-    new HtmlWebpackPlugin({
-      template: 'index.html',
+    new HTMLWebpackPlugin({
+      template: './index.html',
+      minify: {
+        collapseWhitespace: isProd,
+      },
+    }),
+    new CleanWebpackPlugin(),
+    new MiniCssExtractPlugin({
+      filename: '[name].bundle.css',
     }),
   ],
 };
