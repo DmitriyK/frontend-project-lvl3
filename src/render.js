@@ -3,7 +3,7 @@ const renderPosts = ({ posts, watchedPosts }, localize) => {
   containerPosts.innerHTML = '';
   const titleList = document.createElement('h4');
   titleList.classList.add('mb-3');
-  titleList.textContent = localize.t('title.posts');
+  titleList.textContent = localize.t('posts.title');
   const list = document.createElement('ul');
   list.classList.add('list-group', 'mb-5');
   containerPosts.prepend(titleList);
@@ -26,7 +26,7 @@ const renderPosts = ({ posts, watchedPosts }, localize) => {
     button.setAttribute('data-toggle', 'modal');
     button.setAttribute('data-target', '#modalPost');
     button.setAttribute('data-id', id);
-    button.textContent = 'Preview';
+    button.textContent = localize.t('posts.button');
     li.prepend(a);
     li.append(button);
     list.append(li);
@@ -39,7 +39,7 @@ const renderFeeds = ({ feeds }, localize) => {
   containerFeeds.innerHTML = '';
   const titleList = document.createElement('h4');
   titleList.classList.add('mb-3');
-  titleList.textContent = localize.t('title.feeds');
+  titleList.textContent = localize.t('feeds.title');
   const list = document.createElement('ul');
   list.classList.add('list-group', 'mb-5');
   containerFeeds.prepend(titleList);

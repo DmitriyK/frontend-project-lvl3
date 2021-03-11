@@ -1,6 +1,8 @@
 export default {
   translation: {
     form: {
+      input: 'RSS link',
+      buttonAdd: 'Add',
       feedback: {
         success: 'Rss has been loaded',
         sending: 'Sending request...',
@@ -10,9 +12,16 @@ export default {
         exists: 'Rss already exists',
       },
     },
-    title: {
-      feeds: 'Feeds',
-      posts: 'Posts',
+    modal: {
+      linkArticle: 'Full Article',
+      buttonClose: 'Close',
+    },
+    feeds: {
+      title: 'Feeds',
+    },
+    posts: {
+      title: 'Posts',
+      buttonPreview: 'Preview',
     },
   },
 };

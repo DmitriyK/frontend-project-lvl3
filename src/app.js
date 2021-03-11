@@ -6,6 +6,7 @@ import addFeed, { updateFeeds } from './request.js';
 import validate from './validate.js';
 import watch from './watch.js';
 import resources from './locales';
+import homePage from './locales/home-page.js';
 
 export default () => {
   setLocale({
@@ -22,8 +23,8 @@ export default () => {
   const promise = instance
     .use(LanguageDetector)
     .init({
-      lng: 'en',
-      fallbackLng: 'en',
+      lng: 'ru',
+      fallbackLng: 'ru',
       resources,
     })
     .then(() => {
@@ -40,6 +41,7 @@ export default () => {
         watchedPosts: [],
       };
 
+      homePage(instance);
       const watchedState = watch(state, instance);
       updateFeeds(watchedState);
 

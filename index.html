@@ -17,8 +17,8 @@
                 </div>
                 <div class="modal-body"></div>
                 <div class="modal-footer">
-                  <a class="btn btn-primary full-article" href="" role="button" target="_blank" rel="noopener noreferrer">Full Article</a>
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <a id="rss-link-article" class="btn btn-primary full-article" href="" role="button" target="_blank" rel="noopener noreferrer">Full Article</a>
+                  <button id="rss-btn-close" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
               </div>
             </div>
@@ -31,10 +31,10 @@
                         <form id="rssForm" action="" class="rss-form" >
                             <div class="form-row">
                                 <div class="col">
-                                    <input autofocus="" required="" name="url" aria-label="url" class="form-control form-control-lg w-100" placeholder="RSS link">
+                                    <input id="rss-form-input" autofocus="" required="" name="url" aria-label="url" class="form-control form-control-lg w-100" placeholder="RSS link">
                                 </div>
                                 <div class="col-auto">
-                                    <button type="submit" aria-label="add" class="btn btn-lg btn-primary px-sm-5">Add</button>
+                                    <button id="rss-btn-add" type="submit" aria-label="add" class="btn btn-lg btn-primary px-sm-5">Add</button>
                                 </div>
                             </div>
                         </form>
