@@ -24,10 +24,9 @@ const jsLoaders = () => {
 };
 
 module.exports = {
-  context: path.resolve(__dirname, 'src'),
   mode: 'development',
   entry: {
-    main: './index.js',
+    main: './src/index.js',
   },
   output: {
     filename: '[name].bundle.js',
