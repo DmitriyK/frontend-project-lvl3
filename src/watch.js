@@ -11,12 +11,11 @@ export default (state, localize) => {
     switch (process) {
       case 'wait':
         input.classList.remove('is-invalid');
-        containerFeedback.classList.remove('text-danger', 'text-success');
-        containerFeedback.textContent = '';
         break;
       case 'sending':
         button.disabled = true;
         input.disabled = true;
+        containerFeedback.classList.remove('text-danger', 'text-success');
         containerFeedback.textContent = localize.t(`form.feedback.${process}`);
         break;
       case 'success':
