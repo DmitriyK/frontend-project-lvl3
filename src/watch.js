@@ -6,24 +6,24 @@ export default (state, localize) => {
   const button = form.querySelector('button');
   const input = form.querySelector('input');
   const containerFeedback = document.querySelector('.feedback');
-
   const showProcessState = (process) => {
     switch (process) {
       case 'wait':
         input.classList.remove('is-invalid');
+        containerFeedback.classList.remove('text-danger', 'text-success');
+        containerFeedback.textContent = localize.t(`form.feedback.process.${process}`);
         break;
       case 'sending':
         button.disabled = true;
         input.disabled = true;
-        containerFeedback.classList.remove('text-danger', 'text-success');
-        containerFeedback.textContent = localize.t(`form.feedback.${process}`);
+        containerFeedback.textContent = localize.t(`form.feedback.process.${process}`);
         break;
       case 'success':
         form.reset();
         button.disabled = false;
         input.disabled = false;
         containerFeedback.classList.add('text-success');
-        containerFeedback.textContent = localize.t(`form.feedback.${process}`);
+        containerFeedback.textContent = localize.t(`form.feedback.process.${process}`);
         break;
       case 'failed':
         button.disabled = false;
@@ -42,11 +42,12 @@ export default (state, localize) => {
         showProcessState(value);
         break;
       case 'form.valid':
+        // containerFeedback.classList.toggle('text-success');
         button.disabled = !value;
         break;
       case 'form.error':
         if (value) {
-          containerFeedback.textContent = localize.t(`form.feedback.${value}`);
+          containerFeedback.textContent = localize.t(`form.feedback.error.${value}`);
         }
         break;
       case 'feeds':

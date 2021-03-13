@@ -4,12 +4,17 @@ export default {
       input: 'RSS link',
       buttonAdd: 'Add',
       feedback: {
-        success: 'Rss has been loaded',
-        sending: 'Sending request...',
-        network: 'Network error, please try again',
-        rss: 'This source doesn\'t contain valid rss',
-        invalid: 'Must be valid url',
-        exists: 'Rss already exists',
+        process: {
+          wait: 'The link must be a valid URL',
+          success: 'Rss has been loaded',
+          sending: 'Sending request...',
+        },
+        error: {
+          network: 'Network error, please try again',
+          rss: 'This source doesn\'t contain valid rss',
+          exists: 'Rss already exists',
+          invalid: 'This URL is not valid',
+        },
       },
     },
     modal: {
