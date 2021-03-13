@@ -5,12 +5,12 @@ export default {
       buttonAdd: 'Добавить',
       feedback: {
         process: {
-          wait: 'Ссылка должна быть валидным URL',
+          wait: 'Введите URL',
           success: 'RSS успешно загружен',
           sending: 'Отправка запроса...',
         },
         error: {
-          network: 'Ошибка сети, попробуйте еще раз',
+          network: 'Ссылка должна быть валидным URL',
           rss: 'Этот источник не содержит действительного RSS',
           exists: 'RSS уже существует',
           invalid: 'Данный URL не валидный',
