@@ -5,15 +5,14 @@ export default {
       buttonAdd: 'Добавить',
       feedback: {
         process: {
-          wait: 'Введите URL',
           success: 'RSS успешно загружен',
           sending: 'Отправка запроса...',
         },
         error: {
-          network: 'Ссылка должна быть валидным URL',
+          network: 'Ошибка сети',
           rss: 'Ресурс не содержит валидный RSS',
           exists: 'RSS уже существует',
-          invalid: 'Данный URL не валидный',
+          invalid: 'Ссылка должна быть валидным URL',
         },
       },
     },
@@ -26,7 +25,7 @@ export default {
     },
     posts: {
       title: 'Статьи',
-      button: 'Просмотр',
+      buttonPreview: 'Просмотр',
     },
   },
 };

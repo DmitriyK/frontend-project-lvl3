@@ -50,25 +50,25 @@ export default () => {
 
       form.addEventListener('submit', (e) => {
         e.preventDefault();
-        state.form.processState = 'wait';
-        addFeed(watchedState);
-      });
-
-      input.addEventListener('input', (e) => {
-        e.preventDefault();
-        const url = e.target.value;
+        const formData = new FormData(e.target);
+        const url = formData.get('url');
         const urls = state.feeds.map((feed) => feed.url);
+        watchedState.form.processState = 'sending';
+        watchedState.form.error = '';
         const error = validate(url, urls);
         if (error) {
           watchedState.form.processState = 'failed';
           watchedState.form.error = error;
-          watchedState.form.valid = false;
         } else {
-          watchedState.form.processState = 'wait';
-          watchedState.form.error = '';
-          watchedState.form.valid = true;
           state.form.url = url;
+          addFeed(watchedState);
         }
+        console.log(state);
+      });
+
+      input.addEventListener('input', (e) => {
+        e.preventDefault();
+        watchedState.form.processState = 'wait';
       });
 
       $('#modalPost').on('show.bs.modal', (event) => {

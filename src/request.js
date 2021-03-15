@@ -39,7 +39,6 @@ export const updateFeeds = (state) => {
 };
 
 export default (state) => {
-  state.form.processState = 'sending';
   makeRequest(state.form.url)
     .then(({ data }) => {
       state.form.processState = 'success';

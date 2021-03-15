@@ -26,7 +26,7 @@ const renderPosts = ({ posts, watchedPosts }, localize) => {
     button.setAttribute('data-toggle', 'modal');
     button.setAttribute('data-target', '#modalPost');
     button.setAttribute('data-id', id);
-    button.textContent = localize.t('posts.button');
+    button.textContent = localize.t('posts.buttonPreview');
     li.prepend(a);
     li.append(button);
     list.append(li);

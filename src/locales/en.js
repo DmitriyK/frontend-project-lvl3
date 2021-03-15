@@ -5,7 +5,6 @@ export default {
       buttonAdd: 'Add',
       feedback: {
         process: {
-          wait: 'The link must be a valid URL',
           success: 'Rss has been loaded',
           sending: 'Sending request...',
         },

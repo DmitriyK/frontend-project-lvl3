@@ -11,7 +11,7 @@ export default (state, localize) => {
       case 'wait':
         input.classList.remove('is-invalid');
         containerFeedback.classList.remove('text-danger', 'text-success');
-        containerFeedback.textContent = localize.t(`form.feedback.process.${process}`);
+        containerFeedback.textContent = '';
         break;
       case 'sending':
         button.disabled = true;
@@ -40,10 +40,6 @@ export default (state, localize) => {
     switch (path) {
       case 'form.processState':
         showProcessState(value);
-        break;
-      case 'form.valid':
-        // containerFeedback.classList.toggle('text-success');
-        button.disabled = !value;
         break;
       case 'form.error':
         if (value) {
