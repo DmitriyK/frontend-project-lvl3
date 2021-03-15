@@ -63,7 +63,6 @@ export default () => {
           state.form.url = url;
           addFeed(watchedState);
         }
-        console.log(state);
       });
 
       input.addEventListener('input', (e) => {

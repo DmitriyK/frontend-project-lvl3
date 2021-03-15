@@ -15,19 +15,19 @@ export default (state, localize) => {
         break;
       case 'sending':
         button.disabled = true;
-        input.disabled = true;
+        input.setAttribute('readonly', 'readonly');
         containerFeedback.textContent = localize.t(`form.feedback.process.${process}`);
         break;
       case 'success':
         form.reset();
         button.disabled = false;
-        input.disabled = false;
+        input.removeAttribute('readonly');
         containerFeedback.classList.add('text-success');
         containerFeedback.textContent = localize.t(`form.feedback.process.${process}`);
         break;
       case 'failed':
         button.disabled = false;
-        input.disabled = false;
+        input.removeAttribute('readonly');
         input.classList.add('is-invalid');
         containerFeedback.classList.add('text-danger');
         break;
