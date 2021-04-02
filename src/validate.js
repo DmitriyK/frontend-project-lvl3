@@ -6,12 +6,10 @@ export default (url, urls) => {
     url: yup.string().url().notOneOf(urls),
   });
 
-  let error;
   try {
     schema.validateSync({ url });
-    error = null;
+    return null;
   } catch (e) {
-    error = e.message;
+    return e.message;
   }
-  return error;
 };
